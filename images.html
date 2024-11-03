@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="file.jpg" type="image/x-icon">
+    <title>Chawachi3 Image Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Marhey:wght@600&display=swap');
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            
+        }
+        html,body{
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            display: flex;    
+            flex-direction: column;
+            background-image: linear-gradient(to top, #1a1d24,#393d46);
+            --sb-thumb-color: #4776e6;
+            --sb-size: 18px;
+            scrollbar-color: var(--sb-thumb-color) 
+            var(--sb-track-color);
+        }
+        header{
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: max-content;
+            position: fixed;
+            backdrop-filter: blur(30px);
+            font-family: 'Marhey', sans-serif;
+        }
+        .author{
+            opacity: 20%;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-style: italic;
+            color: wheat;
+            transition: all 1s;
+        }
+        .author a{
+            color: white;
+            text-decoration: none;
+        }
+        .welcome{
+            padding: 1rem;
+            color: wheat;
+            opacity: 50%;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .welcome h1,p{
+            text-align: center;
+        }
+        .container{
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+        }
+        .data{
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            width: 100%;
+        }
+        .img{
+            height: 256px;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .img img{
+            width: 256px;
+            height: 256px;
+            border-radius: 9px;
+            transition: all 1s;
+        }
+        .img img:hover{
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+        .succes{
+            margin-bottom: 0.3rem;
+            display: none;
+            color: #4776e6;
+            font-size: larger;
+            letter-spacing: 5px;
+            justify-content: center;
+            background-color: greenyellow;
+            padding: 0.5rem;
+            border-radius: 4px;
+            width: 50%;
+        }
+        .error{
+            margin-bottom: 0.3rem;
+            display: none;
+            color: white;
+            font-size: larger;
+            letter-spacing: 5px;
+            justify-content: center;
+            background-color: crimson;
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+            width: 50%;
+        }
+        #value{
+            position: relative;
+            color: aliceblue;
+            width: 50%;
+            margin-bottom: 3px;
+            padding: 0.5rem ;
+            border-radius: 4px;
+            background-color:#a1b9f2;
+        }
+        .flex{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .n{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .n #chat{
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border: none;
+            justify-content: space-evenly;
+            font-style: italic;
+            font-weight: bolder;
+            cursor: pointer;
+            background-color: #ee4c4b;
+            color: white    ;
+        }
+        .n #chat:hover{
+            box-shadow: 5px 5px #181818;
+            transition: all 1s;
+        }
+        .prompt{
+            padding: 0.5rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(30px);
+        }
+        .prompt input{
+            width: 60%;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: none;
+            background-color: transparent;
+            color: white;
+            border-bottom: 5px solid #ee4c4b;
+        }
+        .prompt input::placeholder{
+            color: #ccc;
+        }
+        .prompt input:focus{
+            outline: none;
+        }
+        .prompt button{
+            width: 10%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            margin-left: 0.2rem;
+            outline: none;
+            background-color: transparent;
+        }
+        .prompt button:hover{
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+        #counter{
+            display: none;
+            color: crimson;
+            width: 10%;
+            background-color: white;
+            margin-left: 2%;
+            border-radius: 3px;
+            padding: 0.5rem;
+            /* border-left: 1px solid white; */
+            /* border-right: 1px solid white; */
+            font-size: larger;
+            font-weight: bolder;
+            text-align: center;
+            cursor: not-allowed;
+        }
+        @media only screen and (max-width:963px) 
+        {
+            .succes,.error,#value{
+                width: 90%;
+                position: relative;
+                top: 10%;
+            }
+            .container{
+                width: auto;
+                height: auto;
+            }
+            .data{
+                margin-top: 130px;
+                grid-template-columns: repeat(2,1fr);
+                margin-bottom: 130px;
+            }
+            .n #chat{
+                justify-content: space-around;
+                width: 50%;
+            }
+        }
+        @media only screen and (max-width:540px){
+            .data{
+                grid-template-columns: repeat(1,1fr);
+            }
+            .img{
+                margin-top: 10px;
+            }
+            .prompt input{
+                width: 100%;
+            }
+        } 
+        
+    </style>
+</head>
+<body>
+    <header>
+        <center>
+            <h2 style="font-family: 'Marhey', sans-serif;text-align:center;color:white;"><img width="30" height="20" src="ver.png" alt=""> AI الشواشع</h2>
+            <div class="author">
+                <p>by <a href="https://elassali.netlify.app">karim el assali</a></p>
+            </div>
+        </center>
+    </header>
+    <div id="welcome" class="welcome">
+        <h1>Welcome <br>
+            مرحبا
+        </h1>
+        <hr>
+        <br><p>In this section you can imagine anything in your mind and move it to an image . <br><br>
+           . في هذه الصفحة يمكنك تحويل اي خيال في عقلك الى صورة
+        </p>
+    </div>
+    <div id="container" class="container">
+        <div id="value"></div>
+        <div id="succes" class="succes">
+            Pleaze wait...
+        </div>
+        <div id="error" class="error">
+            ٱسف هناك خطأ  فكما تعرف انا مجرد شوشع ! اعد المحاولة 🤷‍♂️ <br>
+            Sorry, there's an error. As you know, I'm just a CHOCHA3! Please try again.
+        </div>
+        <div class="data">
+            <div id="first" class="img">
+        
+            </div>
+            <div id="second" class="img">
+            
+            </div>
+            <div  id="third" class="img">
+            
+            </div>
+            <div  id="fourth" class="img">
+            
+            </div>
+        </div>
+    </div>
+    <div class="prompt">
+        <div class="n">
+            <button id="chat">Chat <img width="30" height="30" src="2593627.png" alt=""></button>
+        </div>
+        <div class="flex" style="display: flex;">
+            <input placeholder="Imagine what in your mind..." type="text"  id="txt">
+            <button id="send"><img id="sendimg" src="send.png" width="30" height="30" alt=""></button>
+            <p id="counter"></p>
+        </div>
+    </div>
+
+
+    <script>
+        const api = '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';
+        const txt = document.getElementById('txt');
+        const send = document.getElementById('send');
+        send.addEventListener('click', async () => {
+            document.getElementById('welcome').style.display = "none";
+            document.getElementById('container').style.display = "flex";
+            document.getElementById('succes').style.display = "flex";
+        
+            const imagesToRemove = document.querySelectorAll('.img img');
+            imagesToRemove.forEach(image => {
+                image.parentNode.removeChild(image);
+            });
+        
+            let txt = document.getElementById('txt').value; // use let here
+            let responseDataWillSend;
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        Authorization: 'Bearer' ,
+                        "Content-type": "application/json"
+                        
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo-1106",
+                        messages: [
+                            { role: "user", content: "translate this directly to english without anything else"+txt }
+                        ],
+                    })
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+        
+                // Handle the response here if needed
+                const responseData = await response.json();
+                responseDataWillSend = responseData.choices[0].message.content;
+                console.log("Response Data:", responseData.choices[0].message.content);
+        
+                // Additional logic based on the response if needed
+        
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        
+            // Function to check if user input contains any banned words
+            var bannedWords = ["9lawi", "zaml", "niga","9a7ba","ass","pussy","dick","bitch","9awad","7wi","n7wik","fuck","fuck you","nigga","zbi","zaby","bzazl","nuddes","bubies","tabon","trma","ka3wa","khoraga","5oraga","9ziba"];
+            function containsBannedWord(input, bannedWords) {
+                var lowercasedInput = input.toLowerCase();
+                return bannedWords.some(function (word) {
+                    return lowercasedInput.includes(word.toLowerCase());
+                });
+            }
+            if (containsBannedWord(txt, bannedWords)) {
+                document.getElementById('succes').style.display = "none";
+                document.getElementById('value').style.color = "crimson";
+                console.log("Warning: The message contains inappropriate content.");
+                document.getElementById('value').innerHTML = `Sorry but ${txt} has a bad word! Do you want a BAN`;
+            } else {
+                send.style.display = "none"; // Hide the 'send' button
+                document.getElementById('value').style.color = "white";
+                console.log("The message is clean and can be displayed.");
+                txt = responseDataWillSend;
+                generate(txt);
+            }
+        });
+        
+        
+
+        const generate = async (promptText) => {
+            const methods = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${api}`
+                },
+                body: JSON.stringify({
+                    "prompt": promptText,
+                    "n": 4,
+                    "size": "256x256"
+                })
+            };
+
+            try {
+                
+                const res = await fetch("https://api.openai.com/v1/images/generations", methods);
+                const data = await res.json();
+                setTimeout(()=>{
+                    s =  document.getElementById('succes');
+                    s.style.display = "none";
+                    va = document.getElementById('value');
+                    tx = document.getElementById('txt').value;
+                    va.innerHTML = tx;
+                    va.style.display = "flex";
+                    document.getElementById('txt').value = "";
+                },3000)
+                //first image
+                const fimg_div = document.getElementById('first');
+                let fimg = document.createElement('img');
+                fimg.src = data.data[0].url;
+                fimg.id = "image";
+                fimg_div.append(fimg);
+                //second image
+                const simg_div = document.getElementById('second');
+                let simg = document.createElement('img');
+                simg.src = data.data[1].url
+                simg.id = "image";
+                simg_div.append(simg);
+                //third image
+                const timg_div = document.getElementById('third');
+                let timg = document.createElement('img');
+                timg.src = data.data[2].url
+                timg.id = "image";
+                timg_div.append(timg);
+                //fourth umage
+                const foimg_div = document.getElementById('fourth');
+                let foimg = document.createElement('img');
+                foimg.src = data.data[3].url
+                foimg.id = "image";
+                foimg_div.append(foimg);
+
+
+                //console.log(data.data[0].url);
+                document.getElementById('counter').style.display = "block";
+
+                let i = 21;
+    
+                const intervalId = setInterval(() => {
+                const counterElement = document.getElementById('counter');
+                
+                if (i >= 0) {
+                    console.log(i);
+                    counterElement.innerHTML = i;
+                    i--;
+                    if(i == 9){
+                        counterElement.style.color = "green";
+                    }
+                    if(i == 0){
+                        counterElement.style.display = "none";
+                        document.getElementById('send').style.display = "flex";
+                    }
+                } else {
+                    clearInterval(intervalId);
+                }
+            }, 1000);
+            } catch (error) {
+                document.getElementById('error').style.display = "flex";
+                document.getElementById('succes').style.display = "none";
+
+                setTimeout(()=>{
+                    e =  document.getElementById('error');
+                    e.style.display = "none";
+                },5000)
+                console.error('Error:', error);
+
+                document.getElementById('counter').style.display = "block";
+
+                let i = 6;
+    
+                const intervalId = setInterval(() => {
+                const counterElement = document.getElementById('counter');
+                
+                if (i >= 0) {
+                    console.log(i);
+                    counterElement.innerHTML = i;
+                    i--;
+                    if(i == 0){
+                        counterElement.style.display = "none";
+                        document.getElementById('send').style.display = "flex";
+                    }
+                } else {
+                    clearInterval(intervalId);
+                }
+            }, 1000);
+            }
+
+        };
+        document.getElementById('chat').addEventListener('click',()=>{
+            window.location.href = "index.html"
+        })
+        // todo list app for tomorow
+        //an div in center to welcome user
+    </script>
+</body>
+</html>
